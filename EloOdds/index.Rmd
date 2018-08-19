@@ -1,0 +1,62 @@
+---
+title: "Elo Odds"
+output: html_document
+runtime: shiny
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = FALSE)
+```
+
+Here comes the introduction!
+
+```{r load data, message = FALSE}
+library(tidyverse)
+# available to each user session
+# input_data <- "D:/Rstuff/oddScrape/data/allEloOdds.rds" #needs to be updated for the server to something like "/home/lukas/Rprojects/BettingElo/data/allEloOdds.rds"
+input_data <- "/home/lukas/Rprojects/BettingElo/data/allEloOdds.rds"
+eloOdds <- readRDS(input_data)
+colnames(eloOdds) <-  gsub(pattern = "_odds", replacement = "", colnames(eloOdds))
+
+```
+
+```{r input, echo=FALSE}
+inputPanel(
+  dateInput('date',
+            label = paste('Choose date:'),
+            value = as.character(max(eloOdds$Date)),
+            min = min(eloOdds$Date), max = max(eloOdds$Date),
+            format = "dd.mm.yyyy",
+            startview = 'week', weekstart = 1
+  )
+)
+
+# renderTable({
+#   eloOdds %>% 
+#   filter(Date == input$date)
+#   },
+#   striped = TRUE,
+#   digits = 2) 
+
+DT::renderDataTable({
+  out <- eloOdds %>% filter(Date == input$date) %>% 
+    mutate(Date = format(as.Date(Date), "%d.%m.%Y"))
+  DT::datatable(out,
+                extensions = 'Buttons', 
+                options = list(
+                  dom = 'Bft',
+                  buttons = c('copy', 'csv', 'excel', 'pdf', 'print'),
+                  pageLength = nrow(out)
+                ),
+                rownames = FALSE
+  ) %>% 
+    #DT::formatRound(c("Home", "Draw"), 2)
+    DT::formatRound(5:10, 2)
+})
+
+```
+
+Some stuff at the end.
+
+
+
