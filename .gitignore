@@ -3,3 +3,5 @@
 .RData
 .Ruserdata
 shiny-server.Rproj
+/data/
+/test/
