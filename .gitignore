@@ -3,5 +3,5 @@
 .RData
 .Ruserdata
 shiny-server.Rproj
-/data/
-/test/
+legi-sbt/data/
+legi-sbt/test/
