@@ -17,6 +17,9 @@ allelic.profile <- c("flaA", "pilE", "asd", "mip", "mompS", "proA", "neuA")
 
 colnames(profiles) <- c(sbt.name, allelic.profile)
 
+profiles <- profiles %>% 
+  dplyr::mutate_at(allelic.profile, funs(as.character))
+
 # init some stuff
 
 

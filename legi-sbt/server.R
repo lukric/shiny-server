@@ -36,7 +36,16 @@ shinyServer(function(input, output) {
   df.new <- reactive({
     if (sum(allelic.profile %in% colnames(df())) == length(allelic.profile)) {
       # head(df())
-      out <- df() %>% left_join(profiles, by = allelic.profile, suffix = c("", ".added"))
+      uploaded.class <- df() %>% dplyr::summarise_at(allelic.profile, class) %>% 
+        gather(variable, class)
+      
+      out <- df() %>% 
+        dplyr::mutate_at(allelic.profile, funs(as.character)) %>% 
+        dplyr::left_join(profiles, by = allelic.profile, suffix = c("", ".added"))
+      for (i in unique(uploaded.class$class)) {
+        out <- out %>% 
+          dplyr::mutate_at(uploaded.class %>% filter(class == i) %>% pull(variable), funs(!!paste0("as.", i)))
+      }
       out
     }
   })
