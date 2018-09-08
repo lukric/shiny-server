@@ -1,7 +1,7 @@
 ---
 title: "Elo Odds"
 output: html_document
-runtime: shiny_prerendered
+runtime: shiny
 ---
 
 ```{r setup, include = FALSE}
@@ -22,7 +22,7 @@ colnames(eloOdds) <-  gsub(pattern = "_odds", replacement = "", colnames(eloOdds
 ```
 
 
-```{r input}
+```{r user_input}
 inputPanel(
   dateInput('date',
             label = paste('Choose date:'),
@@ -35,7 +35,7 @@ inputPanel(
 DT::dataTableOutput("tbl")
 ```
 
-```{r blah, context = "server"}
+```{r creat_output}
 # renderTable({
 #   eloOdds %>% 
 #   filter(Date == input$date)
