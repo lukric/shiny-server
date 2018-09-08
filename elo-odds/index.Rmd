@@ -1,26 +1,28 @@
 ---
 title: "Elo Odds"
 output: html_document
-runtime: shiny
+runtime: shiny_prerendered
 ---
 
-```{r setup, include=FALSE}
+```{r setup, include = FALSE}
+library(tidyverse)
+library(DT)
 knitr::opts_chunk$set(echo = FALSE)
 ```
 
 Here comes the introduction!
 
-```{r load data, message = FALSE}
-library(tidyverse)
+
+```{r data, message = FALSE, cache = TRUE, include = FALSE, cache.extra = file.info("/home/lukas/Rprojects/BettingElo/data/allEloOdds.rds")$mtime}
 # available to each user session
 # input_data <- "D:/Rstuff/oddScrape/data/allEloOdds.rds" #needs to be updated for the server to something like "/home/lukas/Rprojects/BettingElo/data/allEloOdds.rds"
 input_data <- "/home/lukas/Rprojects/BettingElo/data/allEloOdds.rds"
 eloOdds <- readRDS(input_data)
 colnames(eloOdds) <-  gsub(pattern = "_odds", replacement = "", colnames(eloOdds))
-
 ```
 
-```{r input, echo=FALSE}
+
+```{r input}
 inputPanel(
   dateInput('date',
             label = paste('Choose date:'),
@@ -30,7 +32,10 @@ inputPanel(
             startview = 'week', weekstart = 1
   )
 )
+DT::dataTableOutput("tbl")
+```
 
+```{r blah, context = "server"}
 # renderTable({
 #   eloOdds %>% 
 #   filter(Date == input$date)
@@ -38,7 +43,7 @@ inputPanel(
 #   striped = TRUE,
 #   digits = 2) 
 
-DT::renderDataTable({
+output$tbl <- DT::renderDataTable({
   out <- eloOdds %>% filter(Date == input$date) %>% 
     mutate(Date = format(as.Date(Date), "%d.%m.%Y"))
   DT::datatable(out,
