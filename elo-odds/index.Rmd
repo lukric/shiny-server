@@ -12,11 +12,11 @@ knitr::opts_chunk$set(echo = FALSE)
 
 Here comes the introduction!
 
-```{r data, message = FALSE, cache = TRUE, cache.extra = file.info("D:/Rstuff/shiny-server/elo-odds/data/allEloOdds.rds")$mtime}
-input_data <- "D:/Rstuff/shiny-server/elo-odds/data/allEloOdds.rds"
+```{r data, message = FALSE, cache = TRUE, cache.extra = file.info("/home/lukas/Rprojects/BettingElo/data/allEloOdds.rds")$mtime}
+input_data <- "/home/lukas/Rprojects/BettingElo/data/allEloOdds.rds"
 
-#```{r data, message = FALSE, cache = TRUE, cache.extra = file.info("/home/lukas/Rprojects/BettingElo/data/allEloOdds.rds")$mtime}
-#input_data <- "/home/lukas/Rprojects/BettingElo/data/allEloOdds.rds"
+# ```{r data, message = FALSE, cache = TRUE, cache.extra = file.info("D:/Rstuff/shiny-server/elo-odds/data/allEloOdds.rds")$mtime}
+# input_data <- "D:/Rstuff/shiny-server/elo-odds/data/allEloOdds.rds"
 
 # available to each user session
 # input_data <- "D:/Rstuff/oddScrape/data/allEloOdds.rds" #needs to be updated for the server to something like "/home/lukas/Rprojects/BettingElo/data/allEloOdds.rds"
