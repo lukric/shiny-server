@@ -1,7 +1,7 @@
 ---
 title: "Elo Odds"
 output: html_document
-runtime: shiny_prerendered
+runtime: shiny
 ---
 
 ```{r setup, include = FALSE}
@@ -12,15 +12,11 @@ knitr::opts_chunk$set(echo = FALSE)
 
 Here comes the introduction!
 
-```{r data, message = FALSE, cache = TRUE, cache.extra = file.info("/home/lukas/Rprojects/BettingElo/data/allEloOdds.rds")$mtime}
-input_data <- "/home/lukas/Rprojects/BettingElo/data/allEloOdds.rds"
 
-# ```{r data, message = FALSE, cache = TRUE, cache.extra = file.info("D:/Rstuff/shiny-server/elo-odds/data/allEloOdds.rds")$mtime}
-# input_data <- "D:/Rstuff/shiny-server/elo-odds/data/allEloOdds.rds"
-
+```{r data, message = FALSE, cache = TRUE, include = FALSE, cache.extra = file.info("/home/lukas/Rprojects/BettingElo/data/allEloOdds.rds")$mtime}
 # available to each user session
 # input_data <- "D:/Rstuff/oddScrape/data/allEloOdds.rds" #needs to be updated for the server to something like "/home/lukas/Rprojects/BettingElo/data/allEloOdds.rds"
-
+input_data <- "/home/lukas/Rprojects/BettingElo/data/allEloOdds.rds"
 eloOdds <- readRDS(input_data)
 colnames(eloOdds) <-  gsub(pattern = "_odds", replacement = "", colnames(eloOdds))
 ```
@@ -28,14 +24,6 @@ colnames(eloOdds) <-  gsub(pattern = "_odds", replacement = "", colnames(eloOdds
 
 ```{r user_input}
 inputPanel(
-  uiOutput("ui")
-)
-DT::dataTableOutput("tbl")
-```
-
-```{r creat_output, context = "server"}
-
-output$ui <- renderUI({
   dateInput('date',
             label = paste('Choose date:'),
             value = as.character(max(eloOdds$Date)),
@@ -43,8 +31,11 @@ output$ui <- renderUI({
             format = "dd.mm.yyyy",
             startview = 'week', weekstart = 1
   )
-}) 
+)
+DT::dataTableOutput("tbl")
+```
 
+```{r creat_output}
 # renderTable({
 #   eloOdds %>% 
 #   filter(Date == input$date)
