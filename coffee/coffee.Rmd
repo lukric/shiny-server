@@ -1,0 +1,84 @@
+---
+title: 'AGES: Coffee model'
+output:
+  html_document:
+    theme: readable
+    highlight: tango
+runtime: shiny
+---
+
+```{r setup, include = FALSE}
+knitr::opts_chunk$set(echo = FALSE)
+library(ggplot2)
+library(scales)
+library(shiny)
+```
+
+This interactive page allows you to calculate different scenarios regarding coffee consumption at AGES. Your can vary several parameters to analyse infinite possible situations.
+
+## Price-per-cup-calculator
+
+Here you can compute the estimated break-even price per cup of coffee. Costs for the coffee machine (maintainance etc.) are not taken into account. A recent "long-term" study suggests that a kg of coffee beans results in 85 cups of delicious coffee (data not shown).
+
+The break-even price per cup of coffee is calculated using the price per pack, the size of the pack and the estimated cups of coffee gained from one kg of beans.
+```{r ppcc}
+inputPanel(
+  numericInput("pack_price", label = "Price per pack (EUR):",
+               value = 10, min = 0, step = 0.01, width = "120px"),
+  # br(),
+  numericInput("pack_size", label = "Size of pack (g):",
+               value = 1000, min = 0, step = 1, width = "100px"),
+  # br(),
+  numericInput("expect_cups_kg", label = "Expected cups per kg of coffee beans:",
+               min = 1, value = 85, step = 1)
+)
+
+renderText({
+  price_cup <- ceiling(input$pack_price / input$expect_cups_kg * 1000 / input$pack_size * 100) / 100
+  HTML(paste0("The price per cup is ", price_cup, " EUR."))
+})
+```
+
+## Coffee..mhhmmmmm
+
+```{r coffee}
+inputPanel(
+  numericInput("avg_coffee_cups", label = "Average daily coffee cup consumption:",
+               value = 10, min = 0, step = 1, width = "90%"),
+  
+  numericInput("net_price", label = "Price of coffee beans per cup (in EUR):",
+               value = 0.12, min = 0, step = 0.01, width = "90%"),
+
+  numericInput("price_cup", label = "Price per cup (in EUR):",
+               value = 0.15, min = 0, step = 0.01, width = "60%"),
+  
+  numericInput("stealing_rate", label = "Stealing rate:",
+               value = 0.1, min = 0, max = 1, step = 0.01, width = "50%")
+)
+
+savings <- reactive({
+  workdays_per_year <- 240
+  
+  savings <- (input$avg_coffee_cups * input$price_cup * (1 - input$stealing_rate) - input$avg_coffee_cups * input$net_price) * 1:240
+  
+  savings
+})
+
+renderText({
+  paste0("The average savings per Day are ", round(savings()[1], 2), " EUR.")
+})
+
+renderPlot({
+  df0 <- data.frame(days = 1:240, savings = savings(), stringsAsFactors = FALSE)
+  
+  ggplot(df0, aes(x = days, y = savings, group = 1)) +
+  geom_line(colour = "blue") +
+  labs(list(x = "Working days", y = "Savings (in EUR)")) +
+  scale_y_continuous(breaks = pretty_breaks(10), expand = c(0, 0)) +
+  theme_minimal()
+})
+```
+
+
+
+
